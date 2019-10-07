@@ -6,5 +6,10 @@ public:
 
   int run(int argc, char** argv);
 
-  static void activate(GtkApplication* app, gpointer user_data);
+  static void activate(GtkApplication* app, gpointer userData);
+  static void activateStatusIcon(GtkStatusIcon* icon, gpointer userData);
+
+private:
+  void setupStatusIcon();
+  GtkStatusIcon* icon;
 };
