@@ -1,10 +1,27 @@
 #include <iostream>
+#include "Alsa.hpp"
 #include "MicrophoneIcon.hpp"
 
 using namespace std;
 
+snd_mixer_selem_regopt selem_regopt = {
+  .ver = 1,
+  .abstract = SND_MIXER_SABSTRACT_NONE,
+  .device = "default",
+};
+
 MicrophoneIcon::MicrophoneIcon() {
   icon = NULL;
+  mixer = NULL;
+  setupMic();
+}
+
+MicrophoneIcon::~MicrophoneIcon() {
+  if (mixer) {
+    snd_mixer_free(mixer);
+    snd_mixer_close(mixer);
+  }
+  mixer_shutdown();
 }
 
 int MicrophoneIcon::run(int argc, char** argv) {
@@ -34,4 +51,16 @@ void MicrophoneIcon::setupStatusIcon() {
 
 void MicrophoneIcon::activateStatusIcon(GtkStatusIcon* icon, gpointer userData) {
   cout << "here" << endl;
+}
+
+
+void MicrophoneIcon::setupMic() {
+  create_mixer_object(&selem_regopt);
+
+  snd_mixer_t* mixer = get_mixer();
+  char name[] = "Capture";
+  snd_mixer_elem_t* elem = get_mixer_elem_by_name(mixer, name);
+
+  bool capturing = is_capturing(elem);
+  cout << capturing << endl;
 }
