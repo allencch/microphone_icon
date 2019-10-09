@@ -17,6 +17,11 @@ static const snd_mixer_selem_channel_id_t control_channels[][2] = {
   { SND_MIXER_SCHN_SIDE_LEFT, SND_MIXER_SCHN_SIDE_RIGHT },
 };
 
+snd_mixer_selem_regopt selem_regopt = {
+  .ver = 1,
+  .abstract = SND_MIXER_SABSTRACT_NONE,
+  .device = "default",
+};
 
 snd_mixer_t* get_mixer() {
   return mixer;
@@ -30,7 +35,7 @@ snd_mixer_selem_id_t* get_selem_id() {
   return current_selem_id;
 }
 
-void create_mixer_object(struct snd_mixer_selem_regopt *selem_regopt) {
+void create_mixer_object() {
     int err;
 
     err = snd_mixer_open(&mixer, 0); // TODO: Close
@@ -38,8 +43,8 @@ void create_mixer_object(struct snd_mixer_selem_regopt *selem_regopt) {
       cout << "cannot open mixer" << endl;
     }
 
-    mixer_device_name = strdup(selem_regopt->device);
-    err = snd_mixer_selem_register(mixer, selem_regopt, NULL);
+    mixer_device_name = strdup(selem_regopt.device);
+    err = snd_mixer_selem_register(mixer, &selem_regopt, NULL);
     if (err < 0) {
       cout << "cannot open mixer" << endl;
     }
@@ -103,7 +108,7 @@ void allocate_channels(snd_mixer_elem_t* elem) {
   }
 }
 
-bool is_capturing(snd_mixer_elem_t* elem) {
+bool is_elem_capturing(snd_mixer_elem_t* elem) {
   allocate_channels(elem);
   int sw;
   int err = snd_mixer_selem_get_capture_switch(elem, cswitch_channels[0], &sw);
@@ -114,4 +119,24 @@ bool is_capturing(snd_mixer_elem_t* elem) {
     cout << "is_capturing error" << endl;
   }
   return (bool)sw;
+}
+
+
+AlsaMic::AlsaMic() {
+  create_mixer_object();
+  mixer = get_mixer();
+  char name[] = "Capture";
+  elem = get_mixer_elem_by_name(mixer, name);
+}
+
+AlsaMic::~AlsaMic() {
+  if (mixer) {
+    snd_mixer_free(mixer);
+    snd_mixer_close(mixer);
+  }
+  mixer_shutdown();
+}
+
+bool AlsaMic::isCapturing() {
+  return is_elem_capturing(elem);
 }

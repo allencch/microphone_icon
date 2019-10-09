@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include <alsa/asoundlib.h>
+#include "Alsa.hpp"
 
 class MicrophoneIcon {
 public:
@@ -16,5 +16,5 @@ private:
   void setupStatusIcon();
   GtkStatusIcon* icon;
 
-  snd_mixer_t* mixer;
+  AlsaMic* alsaMic;
 };
