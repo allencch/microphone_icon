@@ -6,6 +6,7 @@ using namespace std;
 MicrophoneIcon::MicrophoneIcon() {
   icon = NULL;
   alsaMic = new AlsaMic();
+  alsaMic->isCapturing();
 }
 
 MicrophoneIcon::~MicrophoneIcon() {

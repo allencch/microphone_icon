@@ -8,11 +8,12 @@ snd_mixer_elem_t* get_mixer_elem();
 
 void create_mixer_object();
 void mixer_shutdown();
+void toggle_switches(unsigned int type, unsigned int channels);
 
 snd_mixer_elem_t* get_mixer_elem_by_name(snd_mixer_t* mixer, char* name);
-void allocate_channels(snd_mixer_elem_t* elem);
+bool allocate_channels(snd_mixer_elem_t* elem);
 
-bool is_elem_capturing(snd_mixer_elem_t* elem);
+bool is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch);
 
 
 class AlsaMic {
@@ -24,4 +25,5 @@ public:
 private:
   snd_mixer_t* mixer;
   snd_mixer_elem_t* elem;
+  bool has_switch;
 };

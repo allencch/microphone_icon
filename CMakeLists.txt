@@ -3,7 +3,7 @@ project (MicrophoneIcon)
 
 cmake_policy(SET CMP0071 NEW)
 
-set(CMAKE_CXX_FLAGS "-std=c++14 -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS "-std=c++14 -Wno-deprecated-declarations -g")
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,-export-dynamic")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
