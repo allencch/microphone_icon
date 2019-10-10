@@ -1,3 +1,6 @@
+#ifndef ALSA_MIC_HPP
+#define ALSA_MIC_HPP
+
 #include <alsa/asoundlib.h>
 
 // TODO: Refactor to object
@@ -27,3 +30,5 @@ private:
   snd_mixer_elem_t* elem;
   bool has_switch;
 };
+
+#endif

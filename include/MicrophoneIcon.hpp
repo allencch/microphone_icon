@@ -1,3 +1,6 @@
+#ifndef MICROPHONE_ICON_HPP
+#define MICROPHONE_ICON_HPP
+
 #include <gtk/gtk.h>
 #include "Alsa.hpp"
 
@@ -18,3 +21,5 @@ private:
 
   AlsaMic* alsaMic;
 };
+
+#endif
