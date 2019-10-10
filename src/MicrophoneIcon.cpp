@@ -40,6 +40,11 @@ void MicrophoneIcon::setupStatusIcon() {
   g_signal_connect(icon, "activate", G_CALLBACK(MicrophoneIcon::activateStatusIcon), this);
 }
 
+AlsaMic* MicrophoneIcon::getMic() {
+  return alsaMic;
+}
+
 void MicrophoneIcon::activateStatusIcon(GtkStatusIcon* icon, gpointer userData) {
-  cout << "here" << endl;
+  auto microphoneIcon = (MicrophoneIcon*)userData;
+  microphoneIcon->getMic()->toggle();
 }

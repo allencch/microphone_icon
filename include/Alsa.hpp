@@ -24,6 +24,7 @@ public:
   AlsaMic();
   ~AlsaMic();
   bool isCapturing();
+  void toggle();
 
 private:
   snd_mixer_t* mixer;

@@ -14,6 +14,8 @@ public:
   static void activate(GtkApplication* app, gpointer userData);
   static void activateStatusIcon(GtkStatusIcon* icon, gpointer userData);
 
+  AlsaMic* getMic();
+
 private:
   void setupMic();
   void setupStatusIcon();

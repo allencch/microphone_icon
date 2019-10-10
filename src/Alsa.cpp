@@ -8,6 +8,7 @@ using namespace std;
 const int LEFT = 1;
 const int RIGHT = 2;
 
+// TODO: Remove global variables
 snd_mixer_t *mixer;
 char *mixer_device_name;
 snd_mixer_selem_id_t *current_selem_id;
@@ -174,4 +175,8 @@ AlsaMic::~AlsaMic() {
 
 bool AlsaMic::isCapturing() {
   return is_elem_capturing(elem, &has_switch);
+}
+
+void AlsaMic::toggle() {
+  toggle_switches(elem, cswitch_channels, LEFT | RIGHT, has_switch);
 }
