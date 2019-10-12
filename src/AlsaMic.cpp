@@ -99,7 +99,6 @@ bool AlsaMic::allocate_channels(snd_mixer_elem_t* elem) {
   if (has_switch) {
     cswitch_channels[0] = cswitch_channels[1];
   }
-  cout<< "has switch " << has_switch<<endl;
   return has_switch;
 }
 
