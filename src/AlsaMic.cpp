@@ -85,10 +85,12 @@ void AlsaMic::mixer_shutdown() {
 }
 
 void AlsaMic::reload() {
+  micStatusMutex.lock();
   snd_mixer_free(mixer);
   snd_mixer_load(mixer);
   char name[] = "Capture";
   elem = get_mixer_elem_by_name(mixer, name);
+  micStatusMutex.unlock();
 }
 
 snd_mixer_elem_t* AlsaMic::get_mixer_elem_by_name(snd_mixer_t* mixer, char* name) {
@@ -144,7 +146,7 @@ bool AlsaMic::is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch) {
   return (bool)sw;
 }
 
-void AlsaMic::toggle_switches(snd_mixer_elem_t* elem,
+bool AlsaMic::toggle_switches(snd_mixer_elem_t* elem,
                      snd_mixer_selem_channel_id_t* cswitch_channels,
                      unsigned int channels,
                      bool has_switch) {
@@ -161,12 +163,12 @@ void AlsaMic::toggle_switches(snd_mixer_elem_t* elem,
   if (channels & LEFT) {
     err = snd_mixer_selem_get_capture_switch(elem, channel_ids[0], &left);
     if (err < 0)
-      return;
+      return left;
   }
   if (channels & RIGHT) {
     err = snd_mixer_selem_get_capture_switch(elem, channel_ids[1], &right);
     if (err < 0)
-      return;
+      return right;
   }
   if (channels & LEFT) {
     snd_mixer_selem_set_capture_switch(elem, channel_ids[0], !left);
@@ -174,6 +176,7 @@ void AlsaMic::toggle_switches(snd_mixer_elem_t* elem,
   if (channels & RIGHT) {
     snd_mixer_selem_set_capture_switch(elem, channel_ids[1], !right);
   }
+  return !left;
 }
 
 
@@ -192,9 +195,15 @@ AlsaMic::~AlsaMic() {
 }
 
 bool AlsaMic::isCapturing() {
-  return is_elem_capturing(elem, &has_switch);
+  micStatusMutex.lock();
+  auto result = is_elem_capturing(elem, &has_switch);
+  micStatusMutex.unlock();
+  return result;
 }
 
-void AlsaMic::toggle() {
-  toggle_switches(elem, cswitch_channels, LEFT | RIGHT, has_switch);
+bool AlsaMic::toggle() {
+  micStatusMutex.lock();
+  auto result = toggle_switches(elem, cswitch_channels, LEFT | RIGHT, has_switch);
+  micStatusMutex.unlock();
+  return result;
 }

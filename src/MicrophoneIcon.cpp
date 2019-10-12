@@ -30,6 +30,7 @@ bool MicrophoneIcon::getCapturingStatus() {
 
 void MicrophoneIcon::setCapturingStatus(bool capturing) {
   isCapturing = capturing;
+  updateStatusIcon();
 }
 
 void MicrophoneIcon::updateStatusIcon() {
@@ -42,7 +43,6 @@ gboolean MicrophoneIcon::detectCapturing(gpointer userData) {
   bool capturing = microphoneIcon->getMic()->isCapturing();
   if (capturing != microphoneIcon->getCapturingStatus()) {
     microphoneIcon->setCapturingStatus(capturing);
-    microphoneIcon->updateStatusIcon();
   }
   return 1;
 }
@@ -70,7 +70,8 @@ AlsaMic* MicrophoneIcon::getMic() {
 
 void MicrophoneIcon::activateStatusIcon(GtkStatusIcon* icon, gpointer userData) {
   auto microphoneIcon = (MicrophoneIcon*)userData;
-  microphoneIcon->getMic()->toggle();
+  auto capturing = microphoneIcon->getMic()->toggle();
+  microphoneIcon->setCapturingStatus(capturing);
 }
 
 string MicrophoneIcon::getIcon(bool on) {
