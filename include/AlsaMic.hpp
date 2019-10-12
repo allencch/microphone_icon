@@ -15,6 +15,9 @@ public:
   snd_mixer_selem_id_t* get_selem_id();
   void reload();
 
+  static int elem_callback(snd_mixer_elem_t *elem, unsigned int mask);
+  static int mixer_callback(snd_mixer_t *mixer, unsigned int mask, snd_mixer_elem_t *elem);
+
 private:
   void create_mixer_object();
   void mixer_shutdown();

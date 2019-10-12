@@ -39,7 +39,6 @@ void MicrophoneIcon::updateStatusIcon() {
 gboolean MicrophoneIcon::detectCapturing(gpointer userData) {
   auto microphoneIcon = (MicrophoneIcon*)userData;
   bool capturing = microphoneIcon->getMic()->isCapturing();
-  cout << capturing << endl;
   if (capturing != microphoneIcon->getCapturingStatus()) {
     microphoneIcon->setCapturingStatus(capturing);
     microphoneIcon->updateStatusIcon();

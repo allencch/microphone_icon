@@ -8,6 +8,8 @@ using namespace std;
 const int LEFT = 1;
 const int RIGHT = 2;
 
+bool controls_changed;
+
 static const snd_mixer_selem_channel_id_t control_channels[][2] = {
   { SND_MIXER_SCHN_FRONT_LEFT, SND_MIXER_SCHN_FRONT_RIGHT },
   { SND_MIXER_SCHN_REAR_LEFT, SND_MIXER_SCHN_REAR_RIGHT },
@@ -28,6 +30,23 @@ snd_mixer_selem_id_t* AlsaMic::get_selem_id() {
   return current_selem_id;
 }
 
+int AlsaMic::elem_callback(snd_mixer_elem_t *elem, unsigned int mask) {
+  if (mask & (SND_CTL_EVENT_MASK_REMOVE |
+              SND_CTL_EVENT_MASK_INFO |
+              SND_CTL_EVENT_MASK_VALUE)) {
+    controls_changed = true;
+  }
+  return 0;
+}
+
+int AlsaMic::mixer_callback(snd_mixer_t *mixer, unsigned int mask, snd_mixer_elem_t *elem) {
+  if (mask & SND_CTL_EVENT_MASK_ADD) {
+    snd_mixer_elem_set_callback(elem, AlsaMic::elem_callback);
+    controls_changed = true;
+  }
+  return 0;
+}
+
 void AlsaMic::create_mixer_object() {
   int err;
 
@@ -36,13 +55,13 @@ void AlsaMic::create_mixer_object() {
     cout << "cannot open mixer" << endl;
   }
 
-  // mixer_device_name = strdup(selem_regopt.device);
+  mixer_device_name = strdup(selem_regopt.device);
   err = snd_mixer_selem_register(mixer, &selem_regopt, NULL);
   if (err < 0) {
     cout << "cannot open mixer" << endl;
   }
 
-  // snd_mixer_set_callback(mixer, mixer_callback);
+  // snd_mixer_set_callback(mixer, AlsaMic::mixer_callback);
   err = snd_mixer_load(mixer);
   if (err < 0) {
     cout << "cannot load mixer controls" << endl;
@@ -110,6 +129,7 @@ bool AlsaMic::is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch) {
   *has_switch = get_channels(elem);
   int sw;
   int err = snd_mixer_selem_get_capture_switch(elem, cswitch_channels[0], &sw);
+
   if (err >= 0) {
     err = snd_mixer_selem_get_playback_switch(elem, cswitch_channels[1], &sw);
   }
