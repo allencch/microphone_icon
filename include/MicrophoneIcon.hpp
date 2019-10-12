@@ -16,8 +16,12 @@ public:
 
   static void activate(GtkApplication* app, gpointer userData);
   static void activateStatusIcon(GtkStatusIcon* icon, gpointer userData);
+  static gboolean detectCapturing(gpointer userData);
 
   AlsaMic* getMic();
+  bool getCapturingStatus();
+  void setCapturingStatus(bool capturing);
+  void updateStatusIcon();
 
 private:
   void setupMic();
@@ -27,6 +31,7 @@ private:
   string getIcon(bool on);
 
   AlsaMic* alsaMic;
+  bool isCapturing;
 };
 
 #endif

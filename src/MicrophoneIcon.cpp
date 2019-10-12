@@ -24,18 +24,43 @@ int MicrophoneIcon::run(int argc, char** argv) {
   return status;
 }
 
+bool MicrophoneIcon::getCapturingStatus() {
+  return isCapturing;
+}
+
+void MicrophoneIcon::setCapturingStatus(bool capturing) {
+  isCapturing = capturing;
+}
+
+void MicrophoneIcon::updateStatusIcon() {
+  gtk_status_icon_set_from_file(icon, getIcon(isCapturing).c_str());
+}
+
+gboolean MicrophoneIcon::detectCapturing(gpointer userData) {
+  auto microphoneIcon = (MicrophoneIcon*)userData;
+  bool capturing = microphoneIcon->getMic()->isCapturing();
+  cout << capturing << endl;
+  if (capturing != microphoneIcon->getCapturingStatus()) {
+    microphoneIcon->setCapturingStatus(capturing);
+    microphoneIcon->updateStatusIcon();
+  }
+  return 1;
+}
+
 void MicrophoneIcon::activate(GtkApplication* app, gpointer userData) {
   GtkWidget* window;
   window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Microphone Icon");
   gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
+  gtk_widget_show_all(window);
 
   ((MicrophoneIcon*)userData)->setupStatusIcon();
+  g_timeout_add(800, MicrophoneIcon::detectCapturing, userData);
 }
 
 void MicrophoneIcon::setupStatusIcon() {
-  bool capturing = alsaMic->isCapturing();
-  icon = gtk_status_icon_new_from_file(getIcon(capturing).c_str());
+  isCapturing = alsaMic->isCapturing();
+  icon = gtk_status_icon_new_from_file(getIcon(isCapturing).c_str());
   g_signal_connect(icon, "activate", G_CALLBACK(MicrophoneIcon::activateStatusIcon), this);
 }
 
@@ -50,7 +75,7 @@ void MicrophoneIcon::activateStatusIcon(GtkStatusIcon* icon, gpointer userData) 
 
 string MicrophoneIcon::getIcon(bool on) {
   if (on) {
-    return "../images/microhpone-on.png";
+    return "../images/microphone-on.png";
   }
   return "../images/microphone-off.png";
 }

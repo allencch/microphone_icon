@@ -36,14 +36,13 @@ void AlsaMic::create_mixer_object() {
     cout << "cannot open mixer" << endl;
   }
 
-  mixer_device_name = strdup(selem_regopt.device);
+  // mixer_device_name = strdup(selem_regopt.device);
   err = snd_mixer_selem_register(mixer, &selem_regopt, NULL);
   if (err < 0) {
     cout << "cannot open mixer" << endl;
   }
 
   // snd_mixer_set_callback(mixer, mixer_callback);
-
   err = snd_mixer_load(mixer);
   if (err < 0) {
     cout << "cannot load mixer controls" << endl;
@@ -58,10 +57,15 @@ void AlsaMic::create_mixer_object() {
 void AlsaMic::mixer_shutdown() {
   if (mixer) {
     snd_mixer_close(mixer);
+    mixer = NULL;
   }
   if (current_selem_id) {
     snd_mixer_selem_id_free(current_selem_id);
+    current_selem_id = NULL;
   }
+}
+
+void AlsaMic::reload() {
 }
 
 snd_mixer_elem_t* AlsaMic::get_mixer_elem_by_name(snd_mixer_t* mixer, char* name) {
@@ -80,7 +84,7 @@ snd_mixer_elem_t* AlsaMic::get_mixer_elem_by_name(snd_mixer_t* mixer, char* name
 }
 
 
-bool AlsaMic::allocate_channels(snd_mixer_elem_t* elem) {
+bool AlsaMic::get_channels(snd_mixer_elem_t* elem) {
   bool has_switch = false;
   if (snd_mixer_selem_has_capture_switch_joined(elem)) {
     has_switch = false;
@@ -103,7 +107,7 @@ bool AlsaMic::allocate_channels(snd_mixer_elem_t* elem) {
 }
 
 bool AlsaMic::is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch) {
-  *has_switch = allocate_channels(elem);
+  *has_switch = get_channels(elem);
   int sw;
   int err = snd_mixer_selem_get_capture_switch(elem, cswitch_channels[0], &sw);
   if (err >= 0) {
