@@ -2,7 +2,7 @@
 #define MICROPHONE_ICON_HPP
 
 #include <gtk/gtk.h>
-#include "Alsa.hpp"
+#include "AlsaMic.hpp"
 
 class MicrophoneIcon {
 public:
