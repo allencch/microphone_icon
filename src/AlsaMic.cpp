@@ -85,6 +85,10 @@ void AlsaMic::mixer_shutdown() {
 }
 
 void AlsaMic::reload() {
+  snd_mixer_free(mixer);
+  snd_mixer_load(mixer);
+  char name[] = "Capture";
+  elem = get_mixer_elem_by_name(mixer, name);
 }
 
 snd_mixer_elem_t* AlsaMic::get_mixer_elem_by_name(snd_mixer_t* mixer, char* name) {
