@@ -6,7 +6,6 @@ using namespace std;
 MicrophoneIcon::MicrophoneIcon() {
   icon = NULL;
   alsaMic = new AlsaMic();
-  alsaMic->isCapturing();
 }
 
 MicrophoneIcon::~MicrophoneIcon() {
@@ -28,15 +27,15 @@ int MicrophoneIcon::run(int argc, char** argv) {
 void MicrophoneIcon::activate(GtkApplication* app, gpointer userData) {
   GtkWidget* window;
   window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(window), "Test");
+  gtk_window_set_title(GTK_WINDOW(window), "Microphone Icon");
   gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
-  gtk_widget_show_all(window);
 
   ((MicrophoneIcon*)userData)->setupStatusIcon();
 }
 
 void MicrophoneIcon::setupStatusIcon() {
-  icon = gtk_status_icon_new_from_file("../images/microphone-on.png");
+  bool capturing = alsaMic->isCapturing();
+  icon = gtk_status_icon_new_from_file(getIcon(capturing).c_str());
   g_signal_connect(icon, "activate", G_CALLBACK(MicrophoneIcon::activateStatusIcon), this);
 }
 
@@ -47,4 +46,11 @@ AlsaMic* MicrophoneIcon::getMic() {
 void MicrophoneIcon::activateStatusIcon(GtkStatusIcon* icon, gpointer userData) {
   auto microphoneIcon = (MicrophoneIcon*)userData;
   microphoneIcon->getMic()->toggle();
+}
+
+string MicrophoneIcon::getIcon(bool on) {
+  if (on) {
+    return "../images/microhpone-on.png";
+  }
+  return "../images/microphone-off.png";
 }

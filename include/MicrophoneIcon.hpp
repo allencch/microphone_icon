@@ -1,8 +1,11 @@
 #ifndef MICROPHONE_ICON_HPP
 #define MICROPHONE_ICON_HPP
 
+#include <string>
 #include <gtk/gtk.h>
 #include "AlsaMic.hpp"
+
+using namespace std;
 
 class MicrophoneIcon {
 public:
@@ -20,6 +23,8 @@ private:
   void setupMic();
   void setupStatusIcon();
   GtkStatusIcon* icon;
+
+  string getIcon(bool on);
 
   AlsaMic* alsaMic;
 };
