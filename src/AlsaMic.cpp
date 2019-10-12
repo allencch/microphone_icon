@@ -8,12 +8,6 @@ using namespace std;
 const int LEFT = 1;
 const int RIGHT = 2;
 
-// TODO: Remove global variables
-snd_mixer_t *mixer;
-char *mixer_device_name;
-snd_mixer_selem_id_t *current_selem_id;
-snd_mixer_selem_channel_id_t cswitch_channels[2];
-
 static const snd_mixer_selem_channel_id_t control_channels[][2] = {
   { SND_MIXER_SCHN_FRONT_LEFT, SND_MIXER_SCHN_FRONT_RIGHT },
   { SND_MIXER_SCHN_REAR_LEFT, SND_MIXER_SCHN_REAR_RIGHT },
@@ -22,25 +16,19 @@ static const snd_mixer_selem_channel_id_t control_channels[][2] = {
   { SND_MIXER_SCHN_SIDE_LEFT, SND_MIXER_SCHN_SIDE_RIGHT },
 };
 
-snd_mixer_selem_regopt selem_regopt = {
-  .ver = 1,
-  .abstract = SND_MIXER_SABSTRACT_NONE,
-  .device = "default",
-};
-
-snd_mixer_t* get_mixer() {
+snd_mixer_t* AlsaMic::get_mixer() {
   return mixer;
 }
 
-char* get_mixer_device_name() {
+char* AlsaMic::get_mixer_device_name() {
   return mixer_device_name;
 }
 
-snd_mixer_selem_id_t* get_selem_id() {
+snd_mixer_selem_id_t* AlsaMic::get_selem_id() {
   return current_selem_id;
 }
 
-void create_mixer_object() {
+void AlsaMic::create_mixer_object() {
   int err;
 
   err = snd_mixer_open(&mixer, 0); // TODO: Close
@@ -67,7 +55,7 @@ void create_mixer_object() {
   }
 }
 
-void mixer_shutdown() {
+void AlsaMic::mixer_shutdown() {
   if (mixer) {
     snd_mixer_close(mixer);
   }
@@ -76,7 +64,7 @@ void mixer_shutdown() {
   }
 }
 
-snd_mixer_elem_t* get_mixer_elem_by_name(snd_mixer_t* mixer, char* name) {
+snd_mixer_elem_t* AlsaMic::get_mixer_elem_by_name(snd_mixer_t* mixer, char* name) {
   auto elem = snd_mixer_first_elem(mixer);
   if (strcmp(snd_mixer_selem_get_name(elem), name) == 0) {
     return elem;
@@ -92,7 +80,7 @@ snd_mixer_elem_t* get_mixer_elem_by_name(snd_mixer_t* mixer, char* name) {
 }
 
 
-bool allocate_channels(snd_mixer_elem_t* elem) {
+bool AlsaMic::allocate_channels(snd_mixer_elem_t* elem) {
   bool has_switch = false;
   if (snd_mixer_selem_has_capture_switch_joined(elem)) {
     has_switch = false;
@@ -115,7 +103,7 @@ bool allocate_channels(snd_mixer_elem_t* elem) {
   return has_switch;
 }
 
-bool is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch) {
+bool AlsaMic::is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch) {
   *has_switch = allocate_channels(elem);
   int sw;
   int err = snd_mixer_selem_get_capture_switch(elem, cswitch_channels[0], &sw);
@@ -129,7 +117,7 @@ bool is_elem_capturing(snd_mixer_elem_t* elem, bool* has_switch) {
   return (bool)sw;
 }
 
-void toggle_switches(snd_mixer_elem_t* elem,
+void AlsaMic::toggle_switches(snd_mixer_elem_t* elem,
                      snd_mixer_selem_channel_id_t* cswitch_channels,
                      unsigned int channels,
                      bool has_switch) {
@@ -163,6 +151,9 @@ void toggle_switches(snd_mixer_elem_t* elem,
 
 
 AlsaMic::AlsaMic() {
+  selem_regopt = { .ver = 1,
+                   .abstract = SND_MIXER_SABSTRACT_NONE,
+                   .device = "default", };
   create_mixer_object();
   mixer = get_mixer();
   char name[] = "Capture";
