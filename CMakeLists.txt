@@ -7,6 +7,7 @@ set (MicrophoneIcon_VERSION_PATCH 0)
 cmake_policy(SET CMP0071 NEW)
 
 set(CMAKE_CXX_FLAGS "-std=c++14 -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,-export-dynamic")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -24,9 +25,9 @@ add_executable(microphone_icon ${microphone_icon_SRC})
 target_link_libraries(microphone_icon ${GTK3_LIBRARIES} ${ALSA_LIBRARIES})
 
 install(TARGETS microphone_icon
-  DESTINATION BINDIR)
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES images/microphone-on.png images/microphone-off.png
-  DESTINATION "${DATADIR}/microphone_icon")
+  DESTINATION "/usr/share/microphone_icon")
 
 
 include(InstallRequiredSystemLibraries)

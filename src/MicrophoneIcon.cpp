@@ -1,10 +1,10 @@
 #include <iostream>
 #include "MicrophoneIcon.hpp"
 
-#ifndef DATADIR
+#ifdef DEBUG
 #define RESOURCE_DIR "./images"
 #else
-#define RESOURCE_DIR DATADIR "/microphone_icon"
+#define RESOURCE_DIR "/usr/share/microphone_icon"
 #endif
 
 
