@@ -1,6 +1,13 @@
 #include <iostream>
 #include "MicrophoneIcon.hpp"
 
+#ifndef DATADIR
+#define RESOURCE_DIR "./images"
+#else
+#define RESOURCE_DIR DATADIR "/microphone_icon"
+#endif
+
+
 using namespace std;
 
 MicrophoneIcon::MicrophoneIcon() {
@@ -76,7 +83,7 @@ void MicrophoneIcon::activateStatusIcon(GtkStatusIcon* icon, gpointer userData) 
 
 string MicrophoneIcon::getIcon(bool on) {
   if (on) {
-    return "../images/microphone-on.png";
+    return string(RESOURCE_DIR) + "/microphone-on.png";
   }
-  return "../images/microphone-off.png";
+  return string(RESOURCE_DIR) + "/microphone-off.png";
 }
