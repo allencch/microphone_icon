@@ -16,6 +16,8 @@ public:
 
   static void activate(GtkApplication* app, gpointer userData);
   static void activateStatusIcon(GtkStatusIcon* icon, gpointer userData);
+  static void rightClickStatusIcon(GtkStatusIcon* icon, guint button, guint activationTime, gpointer userData);
+  static void quit(GtkMenuItem* menuItem, gpointer userData);
   static gboolean detectCapturing(gpointer userData);
 
   AlsaMic* getMic();
@@ -26,7 +28,10 @@ public:
 private:
   void setupMic();
   void setupStatusIcon();
+  void setupIconMenu();
+  GtkApplication* app;
   GtkStatusIcon* icon;
+  GtkWidget* menu;
 
   string getIcon(bool on);
 
