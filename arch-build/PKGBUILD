@@ -1,0 +1,24 @@
+# Maintainer: Allen Choong <allencch at hotmail dot com>
+pkgname=microphone-icon
+pkgver=1.0
+pkgrel=1
+pkgdes="Show microphone icon with status"
+arch=('i686' 'x86_64')
+url="https://allencch.wordpress.com"
+license=('BSD')
+depends=('gtk3' 'alsa-lib')
+makedepends=('cmake')
+source=('MicrophoneIcon-1.0.0-Source.tar.gz')
+sha1sums=('1bbfc9d280d157bac829f050b6c44576cc2e2d28')
+
+build() {
+  mkdir -p "$srcdir/MicrophoneIcon-1.0.0-Source/build2"
+  cd "$srcdir/MicrophoneIcon-1.0.0-Source/build2"
+  rm -rf ./*.*
+  cmake -DCMAKE_INSTALL_PREFIX=/usr ../
+}
+
+package() {
+  cd "$srcdir/MicrophoneIcon-1.0.0-Source/build2"
+  make DESTDIR="$pkgdir/" install
+}
