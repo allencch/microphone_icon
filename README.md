@@ -1,4 +1,4 @@
-# Microhpone Icon
+# Microphone Icon
 
 Web camera has an indicator if it is capturing.
 But we do not know whether any application is using microphone to capture the audio.
