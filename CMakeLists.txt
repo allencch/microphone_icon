@@ -28,6 +28,10 @@ install(TARGETS microphone_icon
   DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES images/microphone-on.png images/microphone-off.png
   DESTINATION "/usr/share/microphone_icon")
+install(FILES images/microphone-icon.png
+  DESTINATION "/usr/share/pixmaps")
+install(FILES ./microphone-icon.desktop
+  DESTINATION "/usr/share/applications")
 
 
 include(InstallRequiredSystemLibraries)
